@@ -259,10 +259,13 @@ function App() {
         })
       } else if (queryLower.includes('product') || queryLower.includes('category')) {
         setQueryResults({
-          columns: ['CategoryName', 'ProductName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder'],
+          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
           rows: [
             ['Beverages', 'Chai', 18.00, 39, 0],
             ['Beverages', 'Chang', 19.00, 17, 40],
+            ['Condiments', 'Aniseed Syrup', 10.00, 13, 70],
+            ['Condiments', 'Chef Anton\'s Cajun Seasoning', 22.00, 53, 0],
+            ['Seafood', 'Boston Crab Meat', 18.40, 123, 0]
           ]
         })
       } else if (queryLower.includes('order') || queryLower.includes('customer')) {
@@ -340,10 +343,13 @@ function App() {
       // Check patterns in cleaned query
       if (cleanedQuery.toLowerCase().includes('products')) {
         setQueryResults({
-          columns: ['CategoryName', 'ProductName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder'],
+          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
           rows: [
             ['Beverages', 'Chai', 18.00, 39, 0],
             ['Beverages', 'Chang', 19.00, 17, 40],
+            ['Condiments', 'Aniseed Syrup', 10.00, 13, 70],
+            ['Condiments', 'Chef Anton\'s Cajun Seasoning', 22.00, 53, 0],
+            ['Seafood', 'Boston Crab Meat', 18.40, 123, 0]
           ]
         })
       } else if (cleanedQuery.toLowerCase().includes('orders')) {
