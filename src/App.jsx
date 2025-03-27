@@ -71,6 +71,36 @@ function App() {
 
   const predefinedQueries = [
     {
+      id: 0,
+      name: "Large Dataset Demo",
+      category: "demo",
+      description: "Demonstrates virtual scrolling with 1000+ rows of data",
+      query: `SELECT 
+        p.ProductName,
+        c.CategoryName,
+        p.UnitPrice,
+        p.UnitsInStock,
+        p.UnitsOnOrder,
+        s.CompanyName as Supplier,
+        p.QuantityPerUnit
+      FROM Products p
+      JOIN Categories c ON p.CategoryID = c.CategoryID
+      JOIN Suppliers s ON p.SupplierID = s.SupplierID
+      ORDER BY c.CategoryName, p.ProductName;`,
+      results: {
+        columns: ['ProductName', 'CategoryName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder', 'Supplier', 'QuantityPerUnit'],
+        rows: Array(1000).fill(null).map((_, index) => [
+          `Product ${index + 1}`,
+          ['Beverages', 'Condiments', 'Confections', 'Dairy Products', 'Seafood'][index % 5],
+          (19.99 + index * 0.1).toFixed(2),
+          Math.floor(Math.random() * 100),
+          Math.floor(Math.random() * 50),
+          ['Exotic Liquids', 'New Orleans Cajun', 'Tokyo Traders', 'Svensk Sjöföda AB'][index % 4],
+          `${Math.floor(Math.random() * 20) + 1} units`
+        ])
+      }
+    },
+    {
       id: 1,
       name: "Products by Category",
       category: "analytics",
@@ -469,7 +499,7 @@ function App() {
           </div>
         )}
       </div>
-      </div>
+    </div>
   )
 }
 
