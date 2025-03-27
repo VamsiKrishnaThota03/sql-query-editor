@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getCLS, getFID, getLCP } from 'web-vitals'
 import QueryEditor from './components/QueryEditor'
 import ResultsTable from './components/ResultsTable'
 import QuerySelector from './components/QuerySelector'
@@ -44,37 +45,31 @@ function App() {
     }
   }, [])
 
-  // Add performance measurement
+  // Add detailed performance monitoring
   useEffect(() => {
-    const startTime = performance.now()
-    window.addEventListener('load', () => {
-      const loadTime = performance.now() - startTime
-      console.log(`Page loaded in ${loadTime}ms`)
-    })
+    // Initial Load Time
+    const navigationEntry = performance.getEntriesByType('navigation')[0]
+    const initialLoadTime = navigationEntry.loadEventEnd - navigationEntry.startTime
+    console.log('Initial Load Time:', initialLoadTime)
+
+    // Time to Interactive and other Web Vitals
+    getCLS(console.log)  // Cumulative Layout Shift
+    getFID(console.log)  // First Input Delay
+    getLCP(console.log)  // Largest Contentful Paint
+
+    // Component Render Time
+    const componentStart = performance.now()
+    
+    return () => {
+      const componentRender = performance.now() - componentStart
+      console.log('Component Render Time:', componentRender)
+    }
   }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
   }, [isDarkMode])
-
-  useEffect(() => {
-    const metrics = {
-      loadTime: performance.now(),
-      queries: 0,
-      avgExecutionTime: 0
-    }
-
-    window.addEventListener('load', () => {
-      metrics.loadTime = performance.now() - metrics.loadTime
-      console.log('Load time:', metrics.loadTime)
-    })
-
-    return () => {
-      // Save metrics
-      localStorage.setItem('metrics', JSON.stringify(metrics))
-    }
-  }, [])
 
   const predefinedQueries = [
     {

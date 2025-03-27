@@ -42,8 +42,13 @@ A web-based SQL query editor that allows users to write, format, and execute SQL
 ## ⚡ Performance Metrics
 
 ### Page Load Time
-- Initial Load: ~200ms
-- Time to Interactive: ~400ms
+Measured using Performance API and Web Vitals:
+- Initial Load: Measured using `performance.getEntriesByType('navigation')`
+- Time to Interactive: Calculated from First Input Delay + Component Render Time
+- Additional metrics:
+  - Cumulative Layout Shift (CLS)
+  - Largest Contentful Paint (LCP)
+  - First Input Delay (FID)
 
 ### Optimizations
 #### Component Memoization
