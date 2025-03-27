@@ -326,6 +326,53 @@ function App() {
 
   const handleHistorySelect = (historyItem) => {
     setCurrentQuery(historyItem.query)
+    // Clean and execute the query from history
+    const cleanedQuery = cleanSqlQuery(historyItem.query)
+    
+    // Use cleaned query for matching
+    const matchingQuery = predefinedQueries.find(q => 
+      cleanSqlQuery(q.query) === cleanedQuery
+    )
+
+    if (matchingQuery) {
+      setQueryResults(matchingQuery.results)
+    } else {
+      // Check patterns in cleaned query
+      if (cleanedQuery.toLowerCase().includes('products')) {
+        setQueryResults({
+          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
+          rows: [
+            [1, 'Chai', 18.00, 39],
+            [2, 'Chang', 19.00, 17],
+            [3, 'Aniseed Syrup', 10.00, 13],
+            [4, 'Chef Anton\'s Cajun Seasoning', 22.00, 53],
+            [5, 'Chef Anton\'s Gumbo Mix', 21.35, 0]
+          ]
+        })
+      } else if (cleanedQuery.toLowerCase().includes('orders')) {
+        setQueryResults({
+          columns: ['OrderID', 'CustomerID', 'OrderDate', 'ShipCountry'],
+          rows: [
+            [10248, 'VINET', '1996-07-04', 'France'],
+            [10249, 'TOMSP', '1996-07-05', 'Germany'],
+            [10250, 'HANAR', '1996-07-08', 'Brazil'],
+            [10251, 'VICTE', '1996-07-08', 'France'],
+            [10252, 'SUPRD', '1996-07-09', 'Belgium']
+          ]
+        })
+      } else if (cleanedQuery.toLowerCase().includes('customers')) {
+        setQueryResults({
+          columns: ['CustomerID', 'CompanyName', 'ContactName', 'Country'],
+          rows: [
+            ['ALFKI', 'Alfreds Futterkiste', 'Maria Anders', 'Germany'],
+            ['ANATR', 'Ana Trujillo Emparedados', 'Ana Trujillo', 'Mexico'],
+            ['ANTON', 'Antonio Moreno Taquería', 'Antonio Moreno', 'Mexico'],
+            ['AROUT', 'Around the Horn', 'Thomas Hardy', 'UK'],
+            ['BERGS', 'Berglunds snabbköp', 'Christina Berglund', 'Sweden']
+          ]
+        })
+      }
+    }
     setError(null)
   }
 
