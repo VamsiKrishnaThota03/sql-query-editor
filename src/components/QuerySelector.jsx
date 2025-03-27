@@ -10,7 +10,7 @@ function QuerySelector({ queries, onSelect }) {
   )
 
   return (
-    <div className="query-selector">
+    <div className="query-selector query-list">
       <div className="selector-header">
         <h3>Sample Queries</h3>
         <div className="search-box">

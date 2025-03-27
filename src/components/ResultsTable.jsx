@@ -8,13 +8,16 @@ import { FaDownload } from 'react-icons/fa'
 const ResultsTable = memo(({ results }) => {
   if (!results || !results.columns || !results.rows) return null
 
-  const Row = ({ index, style }) => (
-    <tr style={style}>
-      {results.rows[index].map((cell, i) => (
-        <td key={i}>{cell}</td>
-      ))}
-    </tr>
-  )
+  const Row = ({ index, style }) => {
+    const row = index === 0 ? results.columns : results.rows[index - 1]
+    return (
+      <div style={{ ...style, display: 'flex' }} className="table-row">
+        {row.map((cell, i) => (
+          <div key={i} className="table-cell">{cell}</div>
+        ))}
+      </div>
+    )
+  }
 
   const exportData = {
     filename: `query_results_${new Date().toISOString()}.csv`,
@@ -38,23 +41,16 @@ const ResultsTable = memo(({ results }) => {
         </span>
       </div>
       <div className="results-table">
-        <table>
-          <thead>
-            <tr>
-              {results.columns.map((col, i) => (
-                <th key={i}>{col}</th>
-              ))}
-            </tr>
-          </thead>
-        </table>
-        <FixedSizeList
-          height={400}
-          itemCount={results.rows.length}
-          itemSize={35}
-          width="100%"
-        >
-          {Row}
-        </FixedSizeList>
+        <div className="table">
+          <FixedSizeList
+            height={400}
+            itemCount={1 + results.rows.length} // +1 for header
+            itemSize={35}
+            width="100%"
+          >
+            {Row}
+          </FixedSizeList>
+        </div>
       </div>
     </div>
   )

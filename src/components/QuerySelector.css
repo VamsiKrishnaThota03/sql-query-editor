@@ -146,4 +146,40 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+.query-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.query-card h3 {
+  margin: 0 0 8px 0;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.query-description {
+  color: var(--text-color);
+  opacity: 0.8;
+  font-size: 0.9rem;
+  margin: 0 0 12px 0;
+  display: block;
+  min-height: 40px;
+}
+
+.query-preview {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  background: var(--hover-color);
+  padding: 8px;
+  border-radius: 4px;
+  color: var(--text-color);
+  white-space: pre-wrap;
+  max-height: 100px;
+  overflow-y: auto;
 } 

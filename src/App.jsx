@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { getCLS, getFID, getLCP } from 'web-vitals'
 import QueryEditor from './components/QueryEditor'
 import ResultsTable from './components/ResultsTable'
 import QuerySelector from './components/QuerySelector'
@@ -45,25 +44,24 @@ function App() {
     }
   }, [])
 
-  // Add detailed performance monitoring
+  // Simplified performance monitoring
   useEffect(() => {
-    // Initial Load Time
-    const navigationEntry = performance.getEntriesByType('navigation')[0]
-    const initialLoadTime = navigationEntry.loadEventEnd - navigationEntry.startTime
-    console.log('Initial Load Time:', initialLoadTime)
-
-    // Time to Interactive and other Web Vitals
-    getCLS(console.log)  // Cumulative Layout Shift
-    getFID(console.log)  // First Input Delay
-    getLCP(console.log)  // Largest Contentful Paint
-
-    // Component Render Time
-    const componentStart = performance.now()
+    const startTime = performance.now()
     
-    return () => {
-      const componentRender = performance.now() - componentStart
-      console.log('Component Render Time:', componentRender)
+    const logTiming = () => {
+      const loadTime = performance.now() - startTime
+      console.log('Load time:', loadTime.toFixed(2) + 'ms')
+      
+      // Get other performance metrics
+      const paint = performance.getEntriesByType('paint')
+      const fcp = paint.find(entry => entry.name === 'first-contentful-paint')
+      if (fcp) {
+        console.log('First Contentful Paint:', fcp.startTime.toFixed(2) + 'ms')
+      }
     }
+
+    window.addEventListener('load', logTiming)
+    return () => window.removeEventListener('load', logTiming)
   }, [])
 
   useEffect(() => {
@@ -128,6 +126,8 @@ function App() {
     {
       id: 3,
       name: "Sales by Territory",
+      category: "analytics",
+      description: "Analyze sales performance across different territories and regions",
       query: `SELECT 
         r.RegionDescription,
         t.TerritoryDescription,
@@ -155,6 +155,8 @@ function App() {
     {
       id: 4,
       name: "Top Selling Products",
+      category: "reports",
+      description: "View best-performing products by sales volume and revenue",
       query: `SELECT 
         p.ProductName,
         c.CategoryName,
@@ -166,7 +168,7 @@ function App() {
       JOIN Suppliers s ON p.SupplierID = s.SupplierID
       JOIN OrderDetails od ON p.ProductID = od.ProductID
       GROUP BY p.ProductID, p.ProductName, c.CategoryName, s.CompanyName
-      ORDER BY UnitsSold DESC
+      ORDER BY Revenue DESC
       LIMIT 5;`,
       results: {
         columns: ['ProductName', 'CategoryName', 'Supplier', 'UnitsSold', 'Revenue'],
@@ -182,6 +184,8 @@ function App() {
     {
       id: 5,
       name: "Shipping Analysis",
+      category: "analytics",
+      description: "Analyze shipping performance metrics including delivery times and freight costs",
       query: `SELECT 
         s.CompanyName as Shipper,
         COUNT(o.OrderID) as TotalOrders,
@@ -250,68 +254,74 @@ function App() {
     try {
       await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500))
       
-      // Use cleaned query for matching
-      const matchingQuery = predefinedQueries.find(q => 
-        cleanSqlQuery(q.query) === cleanedQuery
-      )
-
-      if (matchingQuery) {
-        setQueryResults(matchingQuery.results)
+      // Find the most relevant predefined query based on keywords
+      const queryLower = cleanedQuery.toLowerCase()
+      if (queryLower.includes('territory') || queryLower.includes('region')) {
+        setQueryResults({
+          columns: ['RegionDescription', 'TerritoryDescription', 'TotalOrders', 'TotalRevenue'],
+          rows: [
+            ['Eastern', 'Boston', 150, 125689.50],
+            ['Western', 'Seattle', 142, 117489.25],
+            ['Northern', 'Montreal', 135, 98654.75],
+            ['Southern', 'Atlanta', 128, 88965.40],
+            ['Eastern', 'New York', 125, 85742.30]
+          ]
+        })
+      } else if (queryLower.includes('product') || queryLower.includes('category')) {
+        setQueryResults({
+          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
+          rows: [
+            [1, 'Chai', 18.00, 39],
+            [2, 'Chang', 19.00, 17],
+            [3, 'Aniseed Syrup', 10.00, 13],
+            [4, 'Chef Anton\'s Cajun Seasoning', 22.00, 53],
+            [5, 'Chef Anton\'s Gumbo Mix', 21.35, 0]
+          ]
+        })
+      } else if (queryLower.includes('order') || queryLower.includes('customer')) {
+        setQueryResults({
+          columns: ['OrderID', 'Customer', 'Employee', 'OrderDate', 'ShippedDate', 'Freight'],
+          rows: [
+            [11077, 'Rattlesnake Canyon Grocery', 'Anne Dodsworth', '1998-05-06', '1998-05-08', 8.53],
+            [11076, 'Bon app\'', 'Margaret Peacock', '1998-05-06', '1998-05-09', 38.28],
+            [11075, 'Richter Supermarkt', 'Janet Leverling', '1998-05-06', null, 6.19],
+            [11074, 'Simons bistro', 'Robert King', '1998-05-06', '1998-05-08', 18.44],
+            [11073, 'Pericles Comidas clásicas', 'Steven Buchanan', '1998-05-05', '1998-05-08', 24.95]
+          ]
+        })
+      } else if (queryLower.includes('ship') || queryLower.includes('freight')) {
+        setQueryResults({
+          columns: ['Shipper', 'TotalOrders', 'AvgShipDays', 'AvgFreight', 'TotalFreight'],
+          rows: [
+            ['Federal Shipping', 168, 3.2, 78.24, 13136.32],
+            ['United Package', 154, 2.8, 65.64, 10108.56],
+            ['Speedy Express', 145, 2.5, 58.35, 8460.75]
+          ]
+        })
       } else {
-        // Check patterns in cleaned query
-        if (cleanedQuery.toLowerCase().includes('products')) {
-          setQueryResults({
-            columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
-            rows: [
-              [1, 'Chai', 18.00, 39],
-              [2, 'Chang', 19.00, 17],
-              [3, 'Aniseed Syrup', 10.00, 13],
-              [4, 'Chef Anton\'s Cajun Seasoning', 22.00, 53],
-              [5, 'Chef Anton\'s Gumbo Mix', 21.35, 0]
-            ]
-          })
-        } else if (cleanedQuery.toLowerCase().includes('orders')) {
-          setQueryResults({
-            columns: ['OrderID', 'CustomerID', 'OrderDate', 'ShipCountry'],
-            rows: [
-              [10248, 'VINET', '1996-07-04', 'France'],
-              [10249, 'TOMSP', '1996-07-05', 'Germany'],
-              [10250, 'HANAR', '1996-07-08', 'Brazil'],
-              [10251, 'VICTE', '1996-07-08', 'France'],
-              [10252, 'SUPRD', '1996-07-09', 'Belgium']
-            ]
-          })
-        } else if (cleanedQuery.toLowerCase().includes('customers')) {
-          setQueryResults({
-            columns: ['CustomerID', 'CompanyName', 'ContactName', 'Country'],
-            rows: [
-              ['ALFKI', 'Alfreds Futterkiste', 'Maria Anders', 'Germany'],
-              ['ANATR', 'Ana Trujillo Emparedados', 'Ana Trujillo', 'Mexico'],
-              ['ANTON', 'Antonio Moreno Taquería', 'Antonio Moreno', 'Mexico'],
-              ['AROUT', 'Around the Horn', 'Thomas Hardy', 'UK'],
-              ['BERGS', 'Berglunds snabbköp', 'Christina Berglund', 'Sweden']
-            ]
-          })
-        } else {
-          // If no pattern matches, show a message
-          setError('No data found for this query. Try one of the sample queries or query Products, Orders, or Customers tables.')
-          return
-        }
+        // For unrecognized queries, show a message
+        setError('Demo: This query type is not recognized. Try querying Products, Orders, Territories, or Shipping.')
+        return
       }
 
-      // Add new query to history
+      // Add to history
       const newHistory = [{
         query: currentQuery,
         timestamp: new Date().toISOString(),
         success: true
-      }, ...queryHistory].slice(0, 10) // Keep only last 10 queries
-
-      // Update state and localStorage
+      }, ...queryHistory].slice(0, 10)
       setQueryHistory(newHistory)
       localStorage.setItem('queryHistory', JSON.stringify(newHistory))
 
     } catch (err) {
       setError('Failed to execute query: ' + err.message)
+      const newHistory = [{
+        query: currentQuery,
+        timestamp: new Date().toISOString(),
+        success: false
+      }, ...queryHistory].slice(0, 10)
+      setQueryHistory(newHistory)
+      localStorage.setItem('queryHistory', JSON.stringify(newHistory))
     } finally {
       setLoading(false)
     }
@@ -319,13 +329,16 @@ function App() {
 
   const handleQuerySelect = (query) => {
     setCurrentQuery(query.query)
-    setQueryResults(query.results)
     setError(null)
     setIsEditorView(true)
+    
+    // Directly use the results from the predefined query
+    setQueryResults(query.results)
   }
 
   const handleHistorySelect = (historyItem) => {
     setCurrentQuery(historyItem.query)
+    setIsEditorView(true)
     // Clean and execute the query from history
     const cleanedQuery = cleanSqlQuery(historyItem.query)
     
@@ -382,7 +395,12 @@ function App() {
 
   return (
     <div className="app">
-      <Navbar isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
+      <Navbar 
+        isDarkMode={isDarkMode} 
+        onThemeToggle={handleThemeToggle}
+        isEditorView={isEditorView}
+        onViewToggle={setIsEditorView}
+      />
       <div className={`main-container ${isEditorView ? 'editor-view' : 'grid-view'}`}>
         {isEditorView ? (
           <>

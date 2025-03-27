@@ -19,7 +19,8 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
     "react-window": "^1.8.11",
-    "sql-formatter": "^15.5.2"
+    "sql-formatter": "^15.5.2",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

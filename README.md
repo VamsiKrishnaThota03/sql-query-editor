@@ -42,13 +42,10 @@ A web-based SQL query editor that allows users to write, format, and execute SQL
 ## ⚡ Performance Metrics
 
 ### Page Load Time
-Measured using Performance API and Web Vitals:
-- Initial Load: Measured using `performance.getEntriesByType('navigation')`
-- Time to Interactive: Calculated from First Input Delay + Component Render Time
-- Additional metrics:
-  - Cumulative Layout Shift (CLS)
-  - Largest Contentful Paint (LCP)
-  - First Input Delay (FID)
+Measured using Performance API:
+- Initial Load Time: Measured using `performance.now()`
+- First Contentful Paint: Using `performance.getEntriesByType('paint')`
+- Component Render Time: Using React's useEffect cleanup
 
 ### Optimizations
 #### Component Memoization

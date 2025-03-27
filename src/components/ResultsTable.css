@@ -31,10 +31,28 @@
   overflow: auto;
 }
 
-.results-table table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+.results-table-container {
+  margin-top: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.results-table .ReactVirtualized__List {
+  overflow-x: hidden !important;
+}
+
+.results-table tr {
+  display: flex;
+}
+
+.results-table th,
+.results-table td {
+  flex: 1;
+  min-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .results-table th {
@@ -64,19 +82,6 @@
   overflow-x: hidden !important;
 }
 
-.results-table tr {
-  display: flex;
-}
-
-.results-table th,
-.results-table td {
-  flex: 1;
-  min-width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .results-header {
@@ -104,4 +109,28 @@
   .results-table td {
     padding: 8px;
   }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-cell {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex: 1;
+  min-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-row:first-child {
+  background: var(--card-bg);
+  font-weight: 600;
+}
+
+.table-row:hover {
+  background: var(--hover-color);
 } 
