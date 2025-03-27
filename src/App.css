@@ -269,14 +269,28 @@ h1 {
 }
 
 @media (max-width: 768px) {
+  .main-container {
+    padding: 12px;
+  }
+
   .queries-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
     gap: 16px;
     padding: 16px;
   }
 
   .editor-view {
     grid-template-columns: 1fr;
+  }
+
+  .query-card {
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .query-preview-container {
+    max-height: 100px;
+    overflow-y: auto;
   }
 
   .sidebar {
@@ -296,13 +310,24 @@ h1 {
   }
 
   .main-container {
-    padding: 12px;
+    padding: 8px;
   }
 
   .queries-grid {
-    grid-template-columns: 1fr;
     gap: 12px;
     padding: 12px;
+  }
+
+  .query-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .query-description {
+    font-size: 0.9rem;
+  }
+
+  .query-preview {
+    font-size: 0.75rem;
   }
 }
 

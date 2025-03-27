@@ -121,20 +121,41 @@
 
   .results-table {
     font-size: 13px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .table-cell {
     padding: 8px;
+    min-width: 100px;
+  }
+
+  .export-button {
+    width: 100%;
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
+  .results-container {
+    border-radius: 8px;
+  }
+
+  .results-header h3 {
+    font-size: 1.1rem;
+  }
+
   .results-table {
     font-size: 12px;
   }
 
   .table-cell {
     padding: 6px;
+    min-width: 80px;
+  }
+
+  .row-count {
+    font-size: 0.8rem;
   }
 }
 
