@@ -22,13 +22,6 @@ const QueryHistory = ({ history, onSelect }) => {
     )
   }
 
-  const truncateQuery = (query) => {
-    const maxLength = 60
-    return query.length > maxLength 
-      ? query.substring(0, maxLength) + '...'
-      : query
-  }
-
   return (
     <div className="query-history query-list">
       <h3>Query History</h3>
@@ -38,18 +31,15 @@ const QueryHistory = ({ history, onSelect }) => {
             key={index}
             className={`query-item ${item.success ? 'success' : 'error'}`}
             onClick={() => onSelect(item)}
-            title={item.query}
           >
-            <div className="query-item-content">
-              <small className="query-timestamp">
-                {item.timestamp ? formatTimestamp(item.timestamp) : 'No timestamp'}
-              </small>
-              <span className="query-status">
-                {item.success ? <FaCheck className="success" /> : <FaTimes className="error" />}
-              </span>
-              <div className="query-tooltip">
-                <code>{item.query}</code>
-              </div>
+            <small className="query-timestamp">
+              {item.timestamp ? formatTimestamp(item.timestamp) : 'No timestamp'}
+            </small>
+            <span className="query-status">
+              {item.success ? <FaCheck className="success" /> : <FaTimes className="error" />}
+            </span>
+            <div className="query-tooltip">
+              <code>{item.query}</code>
             </div>
           </div>
         ))}

@@ -46,7 +46,6 @@
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
-  position: relative;
 }
 
 .query-list {
@@ -312,4 +311,3 @@
     width: auto;
   }
 } 
-

@@ -6,8 +6,6 @@ import QueryHistory from './components/QueryHistory'
 import Navbar from './components/Navbar'
 import './App.css'
 
-"As you can see, this application is built using React with Vite for optimal performance."
-
 // Add loading state indicator
 const LoadingSpinner = () => (
   <div className="loading-spinner">
@@ -75,10 +73,27 @@ function App() {
     {
       id: 1,
       name: "Products by Category",
-      description: "View all products grouped by their categories...",
+      category: "analytics",
+      description: "View all products grouped by their categories with inventory details",
       query: `SELECT 
         c.CategoryName,
-        p.ProductName...`
+        p.ProductName,
+        p.UnitPrice,
+        p.UnitsInStock,
+        p.UnitsOnOrder
+      FROM Products p
+      JOIN Categories c ON p.CategoryID = c.CategoryID
+      ORDER BY c.CategoryName, p.ProductName;`,
+      results: {
+        columns: ['CategoryName', 'ProductName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder'],
+        rows: [
+          ['Beverages', 'Chai', 18.00, 39, 0],
+          ['Beverages', 'Chang', 19.00, 17, 40],
+          ['Condiments', 'Aniseed Syrup', 10.00, 13, 70],
+          ['Condiments', 'Chef Anton\'s Cajun Seasoning', 22.00, 53, 0],
+          ['Seafood', 'Boston Crab Meat', 18.40, 123, 0]
+        ]
+      }
     },
     {
       id: 2,
@@ -190,26 +205,6 @@ function App() {
           ['Speedy Express', 145, 2.5, 58.35, 8460.75]
         ]
       }
-    },
-    {
-      id: 6,
-      name: "Large Dataset Demo",
-      description: "Demonstrates virtual scrolling with 1000+ rows",
-      query: `SELECT * FROM Orders 
-        JOIN OrderDetails 
-        JOIN Products 
-        ORDER BY OrderDate DESC;`,
-      results: {
-        columns: ['OrderID', 'ProductName', 'Quantity', 'UnitPrice', 'OrderDate', 'ShipCountry'],
-        rows: Array(1000).fill(null).map((_, index) => [
-          10248 + index,
-          `Product ${index + 1}`,
-          Math.floor(Math.random() * 100),
-          (Math.random() * 100).toFixed(2),
-          '2024-03-' + (index % 30 + 1),
-          ['USA', 'UK', 'France', 'Germany', 'Spain'][index % 5]
-        ])
-      }
     }
   ]
 
@@ -222,10 +217,25 @@ function App() {
     if (!query.trim()) {
       return 'Query cannot be empty'
     }
+
+    // Clean the query first
+    const cleanedQuery = cleanSqlQuery(query)
+    
+    if (!cleanedQuery) {
+      return 'Query cannot be empty or just comments'
+    }
+
+    // Basic SQL syntax validation
     const basicSyntaxRegex = /^SELECT\s+.+?\s+FROM\s+.+/i
     if (!basicSyntaxRegex.test(cleanedQuery)) {
-      return 'Invalid SQL syntax'
+      return 'Invalid SQL syntax. Query must start with SELECT and include FROM clause'
     }
+
+    // Remove the overly strict HAVING clause requirement
+    // GROUP BY validation is not needed as it's valid to use aggregate functions 
+    // with GROUP BY without HAVING
+
+    return null
   }
 
   const handleQuerySubmit = async () => {
@@ -246,7 +256,37 @@ function App() {
       
       // Find the most relevant predefined query based on keywords
       const queryLower = cleanedQuery.toLowerCase()
-      if (queryLower.includes('territory') || queryLower.includes('region')) {
+      // Parse WHERE clause if exists
+      const whereMatch = queryLower.match(/where\s+(\w+)\s*=\s*["']([^"']+)["']/i)
+      
+      if (queryLower.includes('product') || queryLower.includes('category')) {
+        const results = {
+          columns: ['CategoryName', 'ProductName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder'],
+          rows: [
+            ['Beverages', 'Chai', 18.00, 39, 0],
+            ['Beverages', 'Chang', 19.00, 17, 40],
+            ['Condiments', 'Aniseed Syrup', 10.00, 13, 70],
+            ['Condiments', 'Chef Anton\'s Cajun Seasoning', 22.00, 53, 0],
+            ['Seafood', 'Boston Crab Meat', 18.40, 123, 0]
+          ]
+        }
+
+        // Filter results if WHERE clause exists
+        if (whereMatch) {
+          const [, field, value] = whereMatch
+          const columnIndex = results.columns.findIndex(
+            col => col.toLowerCase() === field.toLowerCase()
+          )
+          
+          if (columnIndex !== -1) {
+            results.rows = results.rows.filter(
+              row => row[columnIndex].toString().toLowerCase() === value.toLowerCase()
+            )
+          }
+        }
+
+        setQueryResults(results)
+      } else if (queryLower.includes('territory') || queryLower.includes('region')) {
         setQueryResults({
           columns: ['RegionDescription', 'TerritoryDescription', 'TotalOrders', 'TotalRevenue'],
           rows: [
@@ -255,17 +295,6 @@ function App() {
             ['Northern', 'Montreal', 135, 98654.75],
             ['Southern', 'Atlanta', 128, 88965.40],
             ['Eastern', 'New York', 125, 85742.30]
-          ]
-        })
-      } else if (queryLower.includes('product') || queryLower.includes('category')) {
-        setQueryResults({
-          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
-          rows: [
-            ['Beverages', 'Chai', 18.00, 39, 0],
-            ['Beverages', 'Chang', 19.00, 17, 40],
-            ['Condiments', 'Aniseed Syrup', 10.00, 13, 70],
-            ['Condiments', 'Chef Anton\'s Cajun Seasoning', 22.00, 53, 0],
-            ['Seafood', 'Boston Crab Meat', 18.40, 123, 0]
           ]
         })
       } else if (queryLower.includes('order') || queryLower.includes('customer')) {
@@ -343,7 +372,7 @@ function App() {
       // Check patterns in cleaned query
       if (cleanedQuery.toLowerCase().includes('products')) {
         setQueryResults({
-          columns: ['ProductID', 'ProductName', 'UnitPrice', 'UnitsInStock'],
+          columns: ['CategoryName', 'ProductName', 'UnitPrice', 'UnitsInStock', 'UnitsOnOrder'],
           rows: [
             ['Beverages', 'Chai', 18.00, 39, 0],
             ['Beverages', 'Chang', 19.00, 17, 40],
@@ -440,7 +469,7 @@ function App() {
           </div>
         )}
       </div>
-    </div>
+      </div>
   )
 }
 
