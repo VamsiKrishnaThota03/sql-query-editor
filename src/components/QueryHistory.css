@@ -30,20 +30,11 @@
   height: 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .query-history .query-item:hover {
   background: var(--border-color);
-}
-
-.query-item-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  height: 100%;
-  position: relative;
 }
 
 .query-timestamp {
@@ -236,33 +227,37 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: -95px;
+  top: -120px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 8px;
-  width: 300px;
-  max-height: 80px;
+  padding: 12px;
+  width: 400px;
+  max-height: 100px;
   overflow-y: auto;
   z-index: 1000;
-  white-space: pre-wrap;
   font-family: 'Fira Code', monospace;
   font-size: 0.9rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   pointer-events: none;
 }
 
-.query-timestamp:hover + .query-preview-tooltip {
+.query-preview-tooltip pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.query-item-content:hover .query-preview-tooltip {
   display: block;
 }
 
-/* Adjust tooltip position for mobile */
 @media (max-width: 768px) {
   .query-preview-tooltip {
     left: 0;
     right: 0;
     transform: none;
-    top: -85px;
+    top: -120px;
     margin-left: 0;
     width: auto;
   }
@@ -274,4 +269,47 @@
 
 .error {
   color: var(--error-color);
+}
+
+.query-tooltip {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 12px;
+  min-width: 300px;
+  max-height: 120px;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.query-tooltip code {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  display: block;
+}
+
+.query-item:hover .query-tooltip {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .query-tooltip {
+    left: 0;
+    right: 0;
+    transform: none;
+    top: -120px;
+    margin-left: 0;
+    width: auto;
+  }
 } 
+

@@ -133,4 +133,18 @@
 
 .table-row:hover {
   background: var(--hover-color);
+}
+
+.row-indicator {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+.table-row {
+  transition: background-color 0.1s ease;
+}
+
+.table-row:hover {
+  background-color: var(--hover-color);
 } 

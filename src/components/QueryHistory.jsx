@@ -38,6 +38,7 @@ const QueryHistory = ({ history, onSelect }) => {
             key={index}
             className={`query-item ${item.success ? 'success' : 'error'}`}
             onClick={() => onSelect(item)}
+            title={item.query}
           >
             <div className="query-item-content">
               <small className="query-timestamp">
@@ -46,8 +47,8 @@ const QueryHistory = ({ history, onSelect }) => {
               <span className="query-status">
                 {item.success ? <FaCheck className="success" /> : <FaTimes className="error" />}
               </span>
-              <div className="query-preview-tooltip">
-                {item.query}
+              <div className="query-tooltip">
+                <code>{item.query}</code>
               </div>
             </div>
           </div>
