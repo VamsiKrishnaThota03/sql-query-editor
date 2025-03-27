@@ -271,16 +271,26 @@ h1 {
 @media (max-width: 768px) {
   .main-container {
     padding: 12px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .content {
+    width: 100%;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .editor-view {
+    grid-template-columns: 1fr;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .queries-grid {
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 16px;
-  }
-
-  .editor-view {
-    grid-template-columns: 1fr;
   }
 
   .query-card {
@@ -311,6 +321,18 @@ h1 {
 
   .main-container {
     padding: 8px;
+    width: 100%;
+  }
+
+  .content {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  #root {
+    padding: 1rem;
+    width: 100%;
   }
 
   .queries-grid {

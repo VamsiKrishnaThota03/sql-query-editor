@@ -3,6 +3,7 @@
   border-radius: 12px;
   border: 1px solid var(--border-color);
   overflow: hidden;
+  width: 100%;
 }
 
 .results-header {
@@ -29,6 +30,8 @@
 .results-table {
   position: relative;
   overflow: auto;
+  max-width: 100vw;
+  -webkit-overflow-scrolling: touch;
 }
 
 .results-table-container {
@@ -36,6 +39,7 @@
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
+  width: 100%;
 }
 
 .results-table {
@@ -46,6 +50,8 @@
 .table-row {
   display: flex;
   border-bottom: 1px solid var(--border-color);
+  min-width: fit-content;
+  width: 100%;
 }
 
 .table-row.header {
@@ -65,6 +71,8 @@
   white-space: nowrap;
   display: flex;
   align-items: center;
+  min-width: 120px;
+  max-width: none;
 }
 
 .table-cell:last-child {
@@ -113,6 +121,12 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .results-container {
+    margin: 0;
+    border-radius: 8px;
+    width: 100%;
+  }
+
   .results-header {
     flex-direction: column;
     gap: 12px;
@@ -123,11 +137,18 @@
     font-size: 13px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
   }
 
   .table-cell {
     padding: 8px;
-    min-width: 100px;
+    min-width: 120px;
+    max-width: none;
+  }
+
+  .table-row {
+    min-width: fit-content;
+    width: 100%;
   }
 
   .export-button {
@@ -139,6 +160,13 @@
 @media (max-width: 480px) {
   .results-container {
     border-radius: 8px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .results-table-container {
+    margin-top: 10px;
+    border-radius: 4px;
   }
 
   .results-header h3 {
@@ -147,11 +175,13 @@
 
   .results-table {
     font-size: 12px;
+    overflow-x: auto;
+    width: 100%;
   }
 
   .table-cell {
     padding: 6px;
-    min-width: 80px;
+    min-width: 100px;
   }
 
   .row-count {
