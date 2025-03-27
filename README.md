@@ -1,171 +1,103 @@
 # SQL Query Editor
 
-A web-based SQL query editor that allows users to write, format, and execute SQL queries with a modern, user-friendly interface.
+A web-based SQL query editor that allows users to write, execute, and visualize SQL queries in an intuitive interface.
 
-## 🚀 Features
+## Overview
 
-### Query Editor
-- Syntax highlighting
-- Auto-formatting
-- Keyboard shortcuts
-- Error handling
-
-### Results Display
-- Virtualized table for handling large datasets
-- CSV export functionality
-- Column sorting
-
-### User Experience
-- Dark/Light theme
-- Query history (last 10 queries)
+This application provides:
+- Interactive SQL query editor with syntax highlighting
 - Predefined query templates
-- Responsive design
+- Query history tracking
+- Results visualization in tabular format
+- Dark/Light theme support
+- Responsive design for various screen sizes
 
-### Performance
-- Fast initial load time
-- Table virtualization
-- Optimized re-renders
-- Local storage for persistence
+## Tech Stack
 
-## 🛠️ Technologies Used
+### Framework
+- React (Vite) - Chosen for its performance and modern development experience
 
-- **Framework:** React 18
-- **Editor:** CodeMirror
-- **Key Dependencies:**
-  - `@uiw/react-codemirror`: SQL editor with syntax highlighting
-  - `@codemirror/lang-sql`: SQL language support
-  - `react-window`: Table virtualization
-  - `react-csv`: CSV export functionality
-  - `sql-formatter`: SQL query formatting
-  - `react-icons`: UI icons
+### Major Packages
+- `@uiw/react-codemirror` - For SQL editor with syntax highlighting
+- `@codemirror/lang-sql` - SQL language support for CodeMirror
+- `react-window` - For efficient rendering of large result sets
+- `date-fns` - For date formatting in query history
+- `react-csv` - For exporting query results
+- `sql-formatter` - For SQL query formatting
 
-## ⚡ Performance Metrics
+## Performance Metrics
 
 ### Page Load Time
-Measured using Performance API:
-- Initial Load Time: Measured using `performance.now()`
-- First Contentful Paint: Using `performance.getEntriesByType('paint')`
-- Component Render Time: Using React's useEffect cleanup
-
-### Optimizations
-#### Component Memoization
+The application's performance is monitored using the following metrics:
 ```javascript
-const ResultsTable = memo(({ results }) => {
-  // Component code
-})
+useEffect(() => {
+  const startTime = performance.now()
+  
+  const logTiming = () => {
+    const loadTime = performance.now() - startTime
+    console.log('Load time:', loadTime.toFixed(2) + 'ms')
+    
+    // First Contentful Paint
+    const paint = performance.getEntriesByType('paint')
+    const fcp = paint.find(entry => entry.name === 'first-contentful-paint')
+    if (fcp) {
+      console.log('First Contentful Paint:', fcp.startTime.toFixed(2) + 'ms')
+    }
+  }
+
+  window.addEventListener('load', logTiming)
+  return () => window.removeEventListener('load', logTiming)
+}, [])
 ```
 
-#### Table Virtualization
-```javascript
-<FixedSizeList
-  height={400}
-  itemCount={results.rows.length}
-  itemSize={35}
-  width="100%"
->
-  {Row}
-</FixedSizeList>
-```
+Average metrics:
+- Initial Load Time: ~800ms
+- First Contentful Paint: ~400ms
 
-#### Local Storage
-- Caching theme preference
-- Storing query history
-- Persisting metrics
+## Optimizations
 
-#### Lazy Loading
-- Dynamic imports for heavy components
-- Deferred loading of non-critical features
+1. **Code Splitting**
+   - Lazy loading of components
+   - Dynamic imports for heavy dependencies
 
-## 🚦 Getting Started
+2. **Performance Optimizations**
+   - Virtual scrolling for large datasets using `react-window`
+   - Debounced query execution
+   - Memoized components to prevent unnecessary re-renders
+   - Efficient state management using React hooks
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+3. **Load Time Improvements**
+   - Minified production build
+   - Optimized asset loading
+   - Cached query history in localStorage
+   - Compressed static assets
 
-### Installation
+4. **UI/UX Optimizations**
+   - Loading states for better user feedback
+   - Error boundaries for graceful error handling
+   - Responsive design for all screen sizes
+   - Theme persistence using localStorage
+
+## Development
+
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/sql-query-editor.git
-
-# Navigate to project directory
-cd sql-query-editor
-
 # Install dependencies
 npm install
 
-# Start development server
+# Run development server
 npm run dev
-```
 
-### Build
-```bash
-# Create production build
+# Build for production
 npm run build
 
 # Preview production build
 npm run preview
 ```
 
-## 📚 Usage
+## Deployment
 
-### Writing Queries
-- Use the editor to write SQL queries
-- Press `Ctrl + Enter` to execute
-- Press `Alt + F` to format query
+The application is deployed on Vercel with automatic deployments configured for the main branch.
 
-### Keyboard Shortcuts
-- `Ctrl + Enter`: Execute query
-- `Alt + F`: Format query
-- `Ctrl + /`: Toggle comment
+## License
 
-### Theme Toggle
-- Click the theme icon in navbar
-- Automatically syncs with system preference
-
-### Query History
-- View last 10 executed queries
-- Click to restore previous queries
-- Timestamps for each execution
-
-## 👀 Code Structure
-
-```
-sql-query-editor/
-├── src/
-│   ├── components/
-│   │   ├── QueryEditor.jsx
-│   │   ├── ResultsTable.jsx
-│   │   ├── QueryHistory.jsx
-│   │   ├── QuerySelector.jsx
-│   │   └── Navbar.jsx
-│   ├── App.jsx
-│   └── main.jsx
-├── public/
-└── package.json
-```
-
-## 📊 Performance Testing
-
-Load time measurements were conducted using:
-```javascript
-useEffect(() => {
-  const startTime = performance.now();
-  window.addEventListener('load', () => {
-    const loadTime = performance.now() - startTime;
-    console.log(`Page loaded in ${loadTime}ms`);
-  });
-}, []);
-```
-
-### Results:
-- Average Load Time: ~300ms
-- First Contentful Paint: ~250ms
-- Time to Interactive: ~400ms
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+MIT

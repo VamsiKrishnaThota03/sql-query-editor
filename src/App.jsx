@@ -436,7 +436,15 @@ function App() {
               >
                 <h3>{query.name}</h3>
                 <p className="query-description">{query.description}</p>
-                <pre className="query-preview">{query.query}</pre>
+                <div className="query-preview-container">
+                  <pre className="query-preview">
+                    {query.query.split('\n')
+                      .map(line => line.trim())
+                      .filter(line => line)
+                      .slice(0, 3)
+                      .join('\n') + (query.query.split('\n').length > 3 ? '\n...' : '')}
+                  </pre>
+                </div>
               </div>
             ))}
           </div>

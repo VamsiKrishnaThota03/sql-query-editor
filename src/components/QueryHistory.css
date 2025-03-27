@@ -20,19 +20,19 @@
   font-size: 1.2rem;
 }
 
-.query-item {
-  padding: 8px 12px;
+.query-history .query-item {
+  padding: 10px 16px;
   background: var(--hover-color);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 36px;
+  position: relative;
+  height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
-.query-item:hover {
+.query-history .query-item:hover {
   background: var(--border-color);
 }
 
@@ -41,26 +41,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.query-preview {
-  display: none;
+  gap: 8px;
+  height: 100%;
+  position: relative;
 }
 
 .query-timestamp {
   color: var(--text-color);
   opacity: 0.7;
-  font-size: 12px;
+  font-size: 14px;
   font-family: 'Fira Code', monospace;
   line-height: normal;
-  display: block;
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
+  position: relative;
 }
 
 .query-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-top: 12px;
   max-height: 300px;
   overflow-y: auto;
@@ -93,13 +94,15 @@
 
 .history-item {
   padding: 12px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  background: var(--hover-color);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
+}
+
+.history-item:hover {
+  background: var(--border-color);
 }
 
 .history-item::before {
@@ -110,11 +113,6 @@
   height: 100%;
   width: 4px;
   transition: opacity 0.2s ease;
-}
-
-.history-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .history-item.success::before {
@@ -203,10 +201,10 @@
 }
 
 .query-status {
-  font-size: 12px;
-  font-weight: bold;
-  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
   opacity: 0.8;
+  font-size: 16px;
 }
 
 .query-item.success .query-status {
@@ -231,4 +229,49 @@
   padding: 0;
   background: transparent;
   margin-bottom: 0;
+}
+
+.query-history .query-preview-tooltip {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -95px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px;
+  width: 300px;
+  max-height: 80px;
+  overflow-y: auto;
+  z-index: 1000;
+  white-space: pre-wrap;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.query-timestamp:hover + .query-preview-tooltip {
+  display: block;
+}
+
+/* Adjust tooltip position for mobile */
+@media (max-width: 768px) {
+  .query-preview-tooltip {
+    left: 0;
+    right: 0;
+    transform: none;
+    top: -85px;
+    margin-left: 0;
+    width: auto;
+  }
+}
+
+.success {
+  color: var(--success-color);
+}
+
+.error {
+  color: var(--error-color);
 } 

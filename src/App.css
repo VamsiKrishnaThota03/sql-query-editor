@@ -138,6 +138,7 @@ h1 {
   flex-direction: column;
   gap: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 200px;
 }
 
 .query-card:hover {
@@ -158,7 +159,6 @@ h1 {
   opacity: 0.8;
   font-size: 0.9rem;
   margin: 0 0 12px 0;
-  flex: 1;
 }
 
 .query-preview {
@@ -347,5 +347,28 @@ h1 {
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+}
+
+.query-preview-container {
+  margin-top: auto;
+  background: var(--hover-color);
+  border-radius: 4px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  display: block;
+  width: 100%;
+}
+
+.query-preview {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  white-space: pre-wrap;
+  margin: 0;
+  opacity: 0.9;
+  overflow: hidden;
+  max-height: 80px;
+  display: block;
   width: 100%;
 }

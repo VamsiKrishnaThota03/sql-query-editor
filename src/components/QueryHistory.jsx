@@ -1,7 +1,18 @@
 import { format } from 'date-fns'
+import { FaCheck, FaTimes } from 'react-icons/fa'
 import './QueryHistory.css'
 
-function QueryHistory({ history, onSelect }) {
+const QueryHistory = ({ history, onSelect }) => {
+  const formatTimestamp = (timestamp) => {
+    try {
+      const date = new Date(timestamp)
+      return format(date, 'MMM d, yyyy HH:mm:ss')  // Format: "Mar 14, 2024 15:30:45"
+    } catch (error) {
+      console.error('Date formatting error:', error)
+      return 'Invalid date'
+    }
+  }
+
   if (!history.length) {
     return (
       <div className="query-history query-list">
@@ -9,20 +20,6 @@ function QueryHistory({ history, onSelect }) {
         <div className="empty-history">No queries executed yet</div>
       </div>
     )
-  }
-
-  const formatDate = (timestamp) => {
-    try {
-      const date = new Date(timestamp)
-      if (isNaN(date.getTime())) {
-        return 'Invalid date'
-      }
-      // Format: "Jan 15, 14:30:45"
-      return format(date, 'MMM d, HH:mm:ss')
-    } catch (error) {
-      console.error('Date formatting error:', error)
-      return 'Invalid date'
-    }
   }
 
   const truncateQuery = (query) => {
@@ -41,18 +38,17 @@ function QueryHistory({ history, onSelect }) {
             key={index}
             className={`query-item ${item.success ? 'success' : 'error'}`}
             onClick={() => onSelect(item)}
-            title={item.query}
           >
             <div className="query-item-content">
-              <div className="query-header">
-                <small className="query-timestamp">
-                  {item.timestamp ? formatDate(item.timestamp) : 'No timestamp'}
-                </small>
-                <span className="query-status">
-                  {item.success ? '✓' : '✗'}
-                </span>
+              <small className="query-timestamp">
+                {item.timestamp ? formatTimestamp(item.timestamp) : 'No timestamp'}
+              </small>
+              <span className="query-status">
+                {item.success ? <FaCheck className="success" /> : <FaTimes className="error" />}
+              </span>
+              <div className="query-preview-tooltip">
+                {item.query}
               </div>
-              <pre className="query-preview">{truncateQuery(item.query)}</pre>
             </div>
           </div>
         ))}
