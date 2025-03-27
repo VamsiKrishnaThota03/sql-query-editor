@@ -34,6 +34,7 @@ function App() {
     const savedTheme = localStorage.getItem('theme')
     return savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
   })
+  const [isEditorView, setIsEditorView] = useState(false)
   
   // Load query history from localStorage on component mount
   useEffect(() => {
@@ -56,6 +57,24 @@ function App() {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
   }, [isDarkMode])
+
+  useEffect(() => {
+    const metrics = {
+      loadTime: performance.now(),
+      queries: 0,
+      avgExecutionTime: 0
+    }
+
+    window.addEventListener('load', () => {
+      metrics.loadTime = performance.now() - metrics.loadTime
+      console.log('Load time:', metrics.loadTime)
+    })
+
+    return () => {
+      // Save metrics
+      localStorage.setItem('metrics', JSON.stringify(metrics))
+    }
+  }, [])
 
   const predefinedQueries = [
     {
@@ -285,13 +304,14 @@ function App() {
         }
       }
 
-      // Add to query history
+      // Add new query to history
       const newHistory = [{
         query: currentQuery,
         timestamp: new Date().toISOString(),
         success: true
-      }, ...queryHistory].slice(0, 10)
+      }, ...queryHistory].slice(0, 10) // Keep only last 10 queries
 
+      // Update state and localStorage
       setQueryHistory(newHistory)
       localStorage.setItem('queryHistory', JSON.stringify(newHistory))
 
@@ -306,6 +326,7 @@ function App() {
     setCurrentQuery(query.query)
     setQueryResults(query.results)
     setError(null)
+    setIsEditorView(true)
   }
 
   const handleHistorySelect = (historyItem) => {
@@ -320,27 +341,46 @@ function App() {
   return (
     <div className="app">
       <Navbar isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
-      <div className="main-container">
-        <div className="sidebar">
-          <QuerySelector 
-            queries={predefinedQueries} 
-            onSelect={handleQuerySelect} 
-          />
-          <QueryHistory 
-            history={queryHistory}
-            onSelect={handleHistorySelect}
-          />
-        </div>
-        <div className="content">
-          <QueryEditor 
-            value={currentQuery}
-            onChange={handleQueryChange}
-            onSubmit={handleQuerySubmit}
-            loading={loading}
-          />
-          {error && <div className="error-message">{error}</div>}
-          {loading ? <LoadingSpinner /> : queryResults && <ResultsTable results={queryResults} />}
-        </div>
+      <div className={`main-container ${isEditorView ? 'editor-view' : 'grid-view'}`}>
+        {isEditorView ? (
+          <>
+            <div className="sidebar">
+              <QuerySelector 
+                queries={predefinedQueries} 
+                onSelect={handleQuerySelect} 
+              />
+              <QueryHistory 
+                history={queryHistory}
+                onSelect={handleHistorySelect}
+              />
+            </div>
+            <div className="content">
+              <QueryEditor 
+                value={currentQuery}
+                onChange={handleQueryChange}
+                onSubmit={handleQuerySubmit}
+                loading={loading}
+                isDarkMode={isDarkMode}
+              />
+              {error && <div className="error-message">{error}</div>}
+              {loading ? <LoadingSpinner /> : queryResults && <ResultsTable results={queryResults} />}
+            </div>
+          </>
+        ) : (
+          <div className="queries-grid">
+            {predefinedQueries.map(query => (
+              <div 
+                key={query.id} 
+                className="query-card"
+                onClick={() => handleQuerySelect(query)}
+              >
+                <h3>{query.name}</h3>
+                <p className="query-description">{query.description}</p>
+                <pre className="query-preview">{query.query}</pre>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

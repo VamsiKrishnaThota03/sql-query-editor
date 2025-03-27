@@ -4,14 +4,15 @@
   overflow: hidden;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: var(--navbar-bg);
+  margin-bottom: 20px;
+  padding: 0 0 16px 0;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -22,41 +23,55 @@
   font-weight: 600;
 }
 
-.run-button {
+.editor-actions {
+  display: flex;
+  gap: 12px;  /* Space between buttons */
+}
+
+.editor-actions button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: linear-gradient(45deg, #2196F3, #1976D2);
-  color: white;
+  padding: 8px 16px;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+}
+
+.run-button {
+  background: var(--primary-color);
+  color: white;
 }
 
 .run-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(33, 150, 243, 0.3);
+  background: var(--secondary-color);
 }
 
-.run-button:active {
-  transform: translateY(0);
+.format-button {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color) !important;
 }
 
-.run-button:disabled {
-  background: #e5e7eb;
+.format-button:hover {
+  background: var(--hover-color);
+}
+
+.editor-actions button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
+}
+
+.editor-actions button svg {
+  font-size: 14px;
 }
 
 .editor-footer {
   padding: 12px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e5e7eb;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
 }
 
 .shortcut-hint {
@@ -71,6 +86,7 @@
 .cm-editor {
   font-family: 'Fira Code', monospace !important;
   font-size: 14px !important;
+  margin-top: 12px;
 }
 
 .cm-editor .cm-line {
@@ -122,4 +138,29 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+
+/* Add to existing CSS */
+.shortcuts-list {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shortcut-item kbd {
+  background: var(--hover-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  font-family: monospace;
+  color: var(--text-color);
 } 

@@ -106,11 +106,62 @@ h1 {
 }
 
 .main-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Grid view styles */
+.grid-view .queries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  padding: 20px;
+}
+
+.query-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.query-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.query-card h3 {
+  margin: 0 0 12px 0;
+  color: var(--text-color);
+  font-size: 1.2rem;
+}
+
+.query-description {
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.query-preview {
+  background: var(--hover-color);
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Editor view styles */
+.editor-view {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 24px;
-  min-height: calc(100vh - 150px);
-  margin-top: 2rem;
 }
 
 .sidebar {
@@ -195,7 +246,11 @@ h1 {
 }
 
 @media (max-width: 768px) {
-  .main-container {
+  .grid-view .queries-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-view {
     grid-template-columns: 1fr;
   }
 

@@ -1,6 +1,8 @@
 import './ResultsTable.css'
 import { memo } from 'react'
 import { FixedSizeList } from 'react-window'
+import { CSVLink } from 'react-csv'
+import { FaDownload } from 'react-icons/fa'
 
 // Memoize the component to prevent unnecessary re-renders
 const ResultsTable = memo(({ results }) => {
@@ -14,10 +16,23 @@ const ResultsTable = memo(({ results }) => {
     </tr>
   )
 
+  const exportData = {
+    filename: `query_results_${new Date().toISOString()}.csv`,
+    data: [
+      results.columns,
+      ...results.rows
+    ]
+  }
+
   return (
     <div className="results-container">
       <div className="results-header">
         <h3>Query Results</h3>
+        <div className="actions">
+          <CSVLink {...exportData} className="export-button">
+            <FaDownload /> Export CSV
+          </CSVLink>
+        </div>
         <span className="row-count">
           {results.rows.length} row{results.rows.length !== 1 ? 's' : ''}
         </span>
