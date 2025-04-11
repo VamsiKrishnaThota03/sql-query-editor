@@ -472,7 +472,7 @@ function App() {
                 isDarkMode={isDarkMode}
               />
               {error && <div className="error-message">{error}</div>}
-              {loading ? <LoadingSpinner /> : queryResults && <ResultsTable results={queryResults} />}
+              {loading ? <LoadingSpinner /> : queryResults && <ResultsTable results={queryResults} isDarkMode={isDarkMode} />}
             </div>
           </>
         ) : (
