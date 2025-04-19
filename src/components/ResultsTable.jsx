@@ -11,8 +11,6 @@ const ResultsTable = memo(({ results, isDarkMode = false }) => {
   const [columnWidths, setColumnWidths] = useState([])
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [resizingColumn, setResizingColumn] = useState(null)
-  const [startX, setStartX] = useState(0)
-  const [startWidth, setStartWidth] = useState(0)
   const [rowHeight, setRowHeight] = useState(35)
   const tableRef = useRef(null)
   const tableWrapperRef = useRef(null)
@@ -104,40 +102,32 @@ const ResultsTable = memo(({ results, isDarkMode = false }) => {
   // Handle column resizing
   const handleResizeStart = (e, columnIndex) => {
     e.preventDefault()
-    setResizingColumn(columnIndex)
-    setStartX(e.clientX)
-    setStartWidth(columnWidths[columnIndex])
+    e.stopPropagation()
     
-    document.addEventListener('mousemove', handleResizeMove)
-    document.addEventListener('mouseup', handleResizeEnd)
-  }
-  
-  const handleResizeMove = useCallback((e) => {
-    if (resizingColumn === null) return
+    const startX = e.pageX
+    const startWidth = columnWidths[columnIndex]
     
-    const diff = e.clientX - startX
-    const newWidth = Math.max(120, startWidth + diff)
-    
-    setColumnWidths(prev => {
-      const newWidths = [...prev]
-      newWidths[resizingColumn] = newWidth
-      return newWidths
-    })
-  }, [resizingColumn, startX, startWidth])
-  
-  const handleResizeEnd = useCallback(() => {
-    setResizingColumn(null)
-    document.removeEventListener('mousemove', handleResizeMove)
-    document.removeEventListener('mouseup', handleResizeEnd)
-  }, [handleResizeMove])
-  
-  // Clean up event listeners
-  useEffect(() => {
-    return () => {
-      document.removeEventListener('mousemove', handleResizeMove)
-      document.removeEventListener('mouseup', handleResizeEnd)
+    function handleMouseMove(e) {
+      const diff = e.pageX - startX
+      const newWidth = Math.max(120, startWidth + diff)
+      
+      setColumnWidths(prev => {
+        const newWidths = [...prev]
+        newWidths[columnIndex] = newWidth
+        return newWidths
+      })
     }
-  }, [handleResizeMove, handleResizeEnd])
+    
+    function handleMouseUp() {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      setResizingColumn(null)
+    }
+    
+    setResizingColumn(columnIndex)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }
 
   // Handle sorting
   const handleSort = (columnIndex) => {
@@ -241,7 +231,7 @@ const ResultsTable = memo(({ results, isDarkMode = false }) => {
                   {sortConfig.key !== colIndex && <FaSort className="sort-icon" />}
                 </span>
                 <div 
-                  className="resize-handle"
+                  className={`resize-handle ${resizingColumn === colIndex ? 'resizing' : ''}`}
                   onMouseDown={(e) => handleResizeStart(e, colIndex)}
                 />
               </div>
