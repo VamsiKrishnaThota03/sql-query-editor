@@ -1,51 +1,46 @@
-import { format } from 'date-fns'
-import { FaCheck, FaTimes } from 'react-icons/fa'
+import { formatDistanceToNow } from 'date-fns'
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
+import { cleanSqlQuery } from '../lib/mockEngine'
 import './QueryHistory.css'
 
-const QueryHistory = ({ history, onSelect }) => {
-  const formatTimestamp = (timestamp) => {
-    try {
-      const date = new Date(timestamp)
-      return format(date, 'MMM d, yyyy HH:mm:ss')  // Format: "Mar 14, 2024 15:30:45"
-    } catch (error) {
-      console.error('Date formatting error:', error)
-      return 'Invalid date'
-    }
-  }
-
-  if (!history.length) {
-    return (
-      <div className="query-history query-list">
-        <h3>Query History</h3>
-        <div className="empty-history">No queries executed yet</div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="query-history query-list">
-      <h3>Query History</h3>
-      <div className="query-list">
-        {history.map((item, index) => (
-          <div
-            key={index}
-            className={`query-item ${item.success ? 'success' : 'error'}`}
-            onClick={() => onSelect(item)}
-          >
-            <small className="query-timestamp">
-              {item.timestamp ? formatTimestamp(item.timestamp) : 'No timestamp'}
-            </small>
-            <span className="query-status">
-              {item.success ? <FaCheck className="success" /> : <FaTimes className="error" />}
-            </span>
-            <div className="query-tooltip">
-              <code>{item.query}</code>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+const timeAgo = (timestamp) => {
+  const date = new Date(timestamp)
+  return Number.isNaN(date.getTime()) ? '' : formatDistanceToNow(date, { addSuffix: true })
 }
 
-export default QueryHistory 
+const QueryHistory = ({ history, onSelect, onClear }) => (
+  <div className="panel query-history">
+    <div className="panel-header">
+      <h2>History</h2>
+      {history.length > 0 && (
+        <button type="button" className="btn btn-link" onClick={onClear}>
+          Clear
+        </button>
+      )}
+    </div>
+    {history.length === 0 ? (
+      <p className="list-empty">Queries you run will appear here.</p>
+    ) : (
+      <ul className="item-list">
+        {history.map((item) => (
+          <li key={`${item.timestamp}-${item.query}`}>
+            <button type="button" className="list-item history-item" onClick={() => onSelect(item)} title={item.query}>
+              <span className="history-status" aria-label={item.success ? 'Succeeded' : 'Failed'}>
+                {item.success ? <FaCheckCircle className="ok" /> : <FaTimesCircle className="fail" />}
+              </span>
+              <span className="history-body">
+                <code className="history-query">{cleanSqlQuery(item.query)}</code>
+                <span className="list-item-sub">
+                  {timeAgo(item.timestamp)}
+                  {item.success && typeof item.rowCount === 'number' ? ` · ${item.rowCount.toLocaleString()} rows` : ''}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)
+
+export default QueryHistory

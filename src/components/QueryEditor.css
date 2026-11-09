@@ -1,166 +1,47 @@
-.query-editor {
-  background: var(--card-bg);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.editor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 0 0 16px 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.editor-header h3 {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
 .editor-actions {
   display: flex;
-  gap: 12px;  /* Space between buttons */
+  gap: 0.5rem;
 }
-
-.editor-actions button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.run-button {
-  background: var(--primary-color);
-  color: white;
-}
-
-.run-button:hover {
-  background: var(--secondary-color);
-}
-
-.format-button {
-  background: var(--card-bg);
-  color: var(--text-color);
-  border: 1px solid var(--border-color) !important;
-}
-
-.format-button:hover {
-  background: var(--hover-color);
-}
-
-.editor-actions button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.editor-actions button svg {
+.editor-frame {
   font-size: 14px;
 }
-
+.editor-frame .cm-editor {
+  background: transparent;
+}
+.editor-frame .cm-scroller {
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+.editor-frame .cm-gutters {
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+}
+.editor-frame .cm-focused {
+  outline: none;
+}
 .editor-footer {
-  padding: 12px 20px;
-  background: var(--card-bg);
-  border-top: 1px solid var(--border-color);
-}
-
-.shortcut-hint {
-  color: #6b7280;
-  font-size: 13px;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
-
-/* CodeMirror customization */
-.cm-editor {
-  font-family: 'Fira Code', monospace !important;
-  font-size: 14px !important;
-  margin-top: 12px;
-}
-
-.cm-editor .cm-line {
-  padding: 2px 0;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .editor-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-
-  .run-button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Add to existing QueryEditor.css */
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.pulse {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Add to existing CSS */
-.shortcuts-list {
-  display: flex;
-  gap: 16px;
-  padding: 8px 0;
-  color: var(--text-color);
-  opacity: 0.7;
-  font-size: 13px;
-}
-
 .shortcut-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.4rem;
 }
 
-.shortcut-item kbd {
-  background: var(--hover-color);
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  font-family: monospace;
-  color: var(--text-color);
-} 
+@media (max-width: 600px) {
+  .query-editor .panel-header h2 {
+    display: none;
+  }
+  .editor-actions {
+    width: 100%;
+  }
+  .editor-actions .btn {
+    flex: 1;
+  }
+}

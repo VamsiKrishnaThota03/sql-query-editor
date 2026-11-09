@@ -1,26 +1,29 @@
-import { FaMoon, FaSun } from 'react-icons/fa'
+import { FaArrowLeft, FaDatabase, FaMoon, FaSun } from 'react-icons/fa'
 import './Navbar.css'
 
 function Navbar({ isDarkMode, onThemeToggle, isEditorView, onViewToggle }) {
   return (
-    <nav className="navbar">
+    <nav className="navbar" aria-label="Main">
       <div className="navbar-content">
-        <div className="navbar-brand">
-          <h1>SQL Query Editor</h1>
-        </div>
+        <button type="button" className="navbar-brand" onClick={() => onViewToggle(false)}>
+          <span className="brand-icon" aria-hidden="true">
+            <FaDatabase />
+          </span>
+          SQL Query Editor
+          <span className="brand-tag">demo</span>
+        </button>
         <div className="navbar-actions">
           {isEditorView && (
-            <button 
-              className="nav-button"
-              onClick={() => onViewToggle(false)}
-            >
-              Back to Grid
+            <button type="button" className="btn btn-ghost" onClick={() => onViewToggle(false)} aria-label="All queries">
+              <FaArrowLeft aria-hidden="true" /> <span className="btn-label">All queries</span>
             </button>
           )}
-          <button 
-            className="theme-toggle"
+          <button
+            type="button"
+            className="btn btn-icon"
             onClick={onThemeToggle}
             aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDarkMode ? 'Light mode' : 'Dark mode'}
           >
             {isDarkMode ? <FaSun /> : <FaMoon />}
           </button>
@@ -30,4 +33,4 @@ function Navbar({ isDarkMode, onThemeToggle, isEditorView, onViewToggle }) {
   )
 }
 
-export default Navbar 
+export default Navbar

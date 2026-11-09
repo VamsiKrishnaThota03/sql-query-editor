@@ -1,49 +1,45 @@
 import { useState } from 'react'
-import { FaSearch, FaPlay } from 'react-icons/fa'
+import { FaSearch } from 'react-icons/fa'
 import './QuerySelector.css'
 
 function QuerySelector({ queries, onSelect }) {
   const [searchTerm, setSearchTerm] = useState('')
-
-  const filteredQueries = queries.filter(query => 
-    query.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const term = searchTerm.trim().toLowerCase()
+  const filtered = queries.filter(
+    (q) => q.name.toLowerCase().includes(term) || q.description.toLowerCase().includes(term)
   )
 
   return (
-    <div className="query-selector query-list">
-      <div className="selector-header">
-        <h3>Sample Queries</h3>
-        <div className="search-box">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search queries..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+    <div className="panel query-selector">
+      <div className="panel-header">
+        <h2>Sample queries</h2>
       </div>
-      <div className="queries-list">
-        {filteredQueries.map((query) => (
-          <div 
-            key={query.id} 
-            className="query-item"
-            onClick={() => onSelect(query)}
-          >
-            <div className="query-item-header">
-              <h4>{query.name}</h4>
-              <button className="run-button">
-                <FaPlay /> Run
-              </button>
-            </div>
-            <div className="query-preview">
-              <pre>{query.query}</pre>
-            </div>
-          </div>
+      <div className="search-box">
+        <FaSearch className="search-icon" aria-hidden="true" />
+        <label htmlFor="query-search" className="sr-only">
+          Search sample queries
+        </label>
+        <input
+          id="query-search"
+          type="search"
+          placeholder="Search queries…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <ul className="item-list">
+        {filtered.map((query) => (
+          <li key={query.id}>
+            <button type="button" className="list-item" onClick={() => onSelect(query)}>
+              <span className="list-item-title">{query.name}</span>
+              <span className="list-item-sub">{query.description}</span>
+            </button>
+          </li>
         ))}
-      </div>
+        {filtered.length === 0 && <li className="list-empty">No queries match “{searchTerm}”.</li>}
+      </ul>
     </div>
   )
 }
 
-export default QuerySelector 
+export default QuerySelector

@@ -4,82 +4,71 @@ import { FaPlay, FaCode } from 'react-icons/fa'
 import { format } from 'sql-formatter'
 import './QueryEditor.css'
 
+const isMac = typeof navigator !== 'undefined' && /mac/i.test(navigator.platform)
+const mod = isMac ? '⌘' : 'Ctrl'
+
 function QueryEditor({ value, onChange, onSubmit, loading, isDarkMode }) {
-  // Detect if user is on Mac
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-
-  const handleKeyDown = (e) => {
-    // Execute query on Ctrl+Enter or Cmd+Enter
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault()
-      onSubmit()
-    }
-    
-    // Format query on Alt+F (Windows) or Option+F (Mac)
-    if (e.key === 'f' && (e.altKey || e.metaKey)) {
-      e.preventDefault()
-      handleFormat()
-    }
-  }
-
   const handleFormat = () => {
     try {
-      const formatted = format(value, {
-        language: 'sql',
-        uppercase: true
-      })
-      onChange(formatted)
+      onChange(format(value, { language: 'sql', keywordCase: 'upper' }))
     } catch (err) {
       console.error('Format failed:', err)
     }
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault()
+      onSubmit()
+    }
+    // Alt/Option + Shift + F formats (plain Alt+F types a character on macOS)
+    if (e.code === 'KeyF' && e.altKey && e.shiftKey) {
+      e.preventDefault()
+      handleFormat()
+    }
+  }
+
   const shortcuts = [
-    { key: 'Ctrl + Enter', action: 'Execute Query' },
-    { key: isMac ? '⌥ + F' : 'Alt + F', action: 'Format Query' },
-    { key: 'Ctrl + /', action: 'Toggle Comment' }
+    { key: `${mod} + Enter`, action: 'Run' },
+    { key: `${isMac ? '⌥' : 'Alt'} + Shift + F`, action: 'Format' },
+    { key: `${mod} + /`, action: 'Comment' },
   ]
 
   return (
-    <div className="query-editor">
-      <div className="editor-header">
-        <h3>SQL Query</h3>
+    <div className="panel query-editor">
+      <div className="panel-header">
+        <h2>SQL query</h2>
         <div className="editor-actions">
-          <button 
-            onClick={onSubmit} 
-            disabled={loading}
-            className="run-button"
-          >
-            <FaPlay /> Run Query
+          <button type="button" onClick={handleFormat} className="btn btn-secondary" disabled={!value.trim()}>
+            <FaCode aria-hidden="true" /> Format
           </button>
-          <button 
-            onClick={handleFormat}
-            className="format-button"
-          >
-            <FaCode /> Format SQL
+          <button type="button" onClick={onSubmit} disabled={loading || !value.trim()} className="btn btn-primary">
+            <FaPlay aria-hidden="true" /> {loading ? 'Running…' : 'Run query'}
           </button>
         </div>
       </div>
-      <CodeMirror
-        value={value}
-        height="200px"
-        extensions={[sql()]}
-        onChange={onChange}
-        onKeyDown={handleKeyDown}
-        theme={isDarkMode ? 'dark' : 'light'}
-        placeholder="Enter your SQL query here..."
-      />
+      <div className="editor-frame">
+        <CodeMirror
+          value={value}
+          minHeight="180px"
+          maxHeight="360px"
+          extensions={[sql()]}
+          onChange={onChange}
+          onKeyDown={handleKeyDown}
+          theme={isDarkMode ? 'dark' : 'light'}
+          placeholder="SELECT * FROM Products WHERE CategoryName = 'Beverages';"
+          aria-label="SQL editor"
+        />
+      </div>
       <div className="editor-footer">
-        <div className="shortcuts-list">
-          {shortcuts.map(({ key, action }) => (
-            <span key={key} className="shortcut-item">
-              <kbd>{key}</kbd> {action}
-            </span>
-          ))}
-        </div>
+        {shortcuts.map(({ key, action }) => (
+          <span key={key} className="shortcut-item">
+            <kbd>{key}</kbd> {action}
+          </span>
+        ))}
       </div>
     </div>
   )
 }
 
-export default QueryEditor 
+export default QueryEditor
