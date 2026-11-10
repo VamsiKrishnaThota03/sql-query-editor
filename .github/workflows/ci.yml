@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:run
+
+      - name: Coverage
+        if: matrix.node == '20'
+        run: npm run test:coverage
+
+  build:
+    name: production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Vendor chunks are split out of app code
+        run: |
+          set -euo pipefail
+          ls -la dist/assets
+          # CodeMirror and sql-formatter are the bulk of the bundle and change
+          # far less often than app code. If the manualChunks config is dropped,
+          # every deploy invalidates the whole vendor payload in users' caches.
+          for chunk in editor formatter grid; do
+            ls dist/assets | grep -q "^${chunk}-" \
+              || { echo "::error::expected a '${chunk}' vendor chunk; is manualChunks still configured?"; exit 1; }
+          done
+          echo "vendor chunks present"
+
+      - name: Security headers are configured for the deployment
+        run: |
+          set -euo pipefail
+          # This is a static SPA, so the headers live in vercel.json rather than
+          # in server code. Guard against the block being dropped.
+          for header in "Content-Security-Policy" "X-Content-Type-Options" \
+                        "Referrer-Policy" "Strict-Transport-Security" "X-Frame-Options"; do
+            grep -q "$header" vercel.json \
+              || { echo "::error::$header missing from vercel.json"; exit 1; }
+          done
+          node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
+          echo "security headers present and vercel.json is valid JSON"
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7

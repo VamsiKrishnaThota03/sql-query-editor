@@ -7,6 +7,10 @@ A browser-based SQL editor demo built with React, Vite and CodeMirror. It has sy
 ![CodeMirror](https://img.shields.io/badge/CodeMirror-6-D30707)
 ![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-000000?logo=vercel)
 
+[![CI](https://github.com/VamsiKrishnaThota03/sql-query-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/VamsiKrishnaThota03/sql-query-editor/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/VamsiKrishnaThota03/sql-query-editor/actions/workflows/codeql.yml/badge.svg)](https://github.com/VamsiKrishnaThota03/sql-query-editor/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## Live demo
 
 **https://sql-query-editor-fawn.vercel.app**
@@ -113,3 +117,69 @@ There are no environment variables to set.
 ## Contact
 
 Questions or feedback: vamsikrishnathota483@gmail.com
+
+
+## Tests
+
+```bash
+npm run test:run       # 29 tests
+npm run test:coverage
+```
+
+The `test` script was `node --test src/lib/`, which does not work on Node 20+ —
+passing a directory makes the runner try to `require` it as a module, so the
+suite had been failing with `MODULE_NOT_FOUND` rather than running. It now uses
+Vitest, which also makes component tests possible.
+
+The 6 existing engine assertions were kept and expanded to 22, covering:
+comment stripping (including multi-line block comments), every rejection path
+in `validateQuery` (empty, comments-only, `DELETE`/`DROP`/`UPDATE`/`INSERT`,
+and a bare `SELECT 1`), every predefined query returning its own result set
+verbatim, predefined matching surviving comments/casing/a trailing semicolon,
+the 1,000-row dataset staying rectangular — the virtualised grid assumes one
+cell per column, so a ragged row would render as a shifted column rather than
+an error — `WHERE` equality being case-insensitive and accepting single-quoted,
+double-quoted and numeric values, an unknown `WHERE` column returning
+everything rather than silently returning nothing, `LIMIT`, the two combined,
+keyword routing to each table, and that repeated queries never mutate the
+underlying mock tables.
+
+7 component tests cover `ResultsTable`: headers rendering, the row count, an
+empty result set not throwing, the CSV download link, sort controls, and that
+cell values are rendered as text rather than markup. That last one guards
+against anyone introducing `dangerouslySetInnerHTML` on the cell path — the mock
+data is static today, but a real engine's output would not be.
+
+## Security headers
+
+This is a static SPA with no backend and no secrets: the SQL is never executed,
+and the Northwind-style data is bundled. The headers therefore live in
+`vercel.json` rather than in server code — a CSP plus `nosniff`,
+`strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, HSTS and a
+`Permissions-Policy` denying camera, microphone and geolocation.
+
+`script-src` is `'self'` with no `'unsafe-inline'`. `style-src` does need it,
+because CodeMirror sets inline styles on its editor DOM; that is noted in the
+config rather than left unexplained. `form-action` is `'none'` since the app
+submits nothing anywhere.
+
+## Build
+
+The Vite dev server binds `127.0.0.1` explicitly, so it is never reachable from
+the local network — use `npm run dev -- --host` deliberately if you want to
+share it.
+
+CodeMirror (420 kB), sql-formatter (235 kB) and the grid libraries are split
+into their own chunks, leaving app code at 175 kB. Those three change far less
+often than the app, so shipping a UI tweak no longer invalidates the whole
+vendor payload in users' caches. CI asserts the chunks are still being emitted,
+since losing the `manualChunks` config would silently undo it.
+
+## Continuous integration
+
+| Job | What it proves |
+| --- | --- |
+| `test` (Node 20, 22) | ESLint and 29 tests, plus coverage on 20 |
+| `build` | A production build; that the `editor`, `formatter` and `grid` vendor chunks are still emitted; and that `vercel.json` is valid JSON with the security headers intact |
+
+CodeQL runs weekly and on every push; Dependabot groups weekly patch/minor bumps.
